@@ -25,6 +25,7 @@ class Downloader(object):
         }
         self._novel_dict = collections.OrderedDict()  # 保存章信息的字典
         self.novel_info = collections.OrderedDict()  # 小说信息的字典
+        self.__novel_name = "无名称"  # 小说名
 
     # 网络请求
     def __requests_get(self, target):
@@ -39,7 +40,7 @@ class Downloader(object):
         # response.encoding = "utf-8"
         # response.encoding = "gbk"
         # html = response.text
-        print(html)
+        # print(html)
         return html
 
     # 获取小说详情和大纲目录
@@ -100,6 +101,7 @@ class Downloader(object):
                 print(key)
 
         # 添加小说字典信息
+        self.__novel_name = novel_name
         self.novel_info["name"] = novel_name
         self.novel_info["author"] = novel_author
         self.novel_info["poster"] = novel_poster
@@ -129,12 +131,72 @@ class Downloader(object):
         # 上一章
         # 下一章
         # 获取小说下载列表信息
+        file_name = "./novel/" + self.__novel_name + ".txt"
+        # 删除旧文件
+        if file_name in os.listdir():
+            os.remove(file_name)
+
         for title, link in self._novel_dict.items():
             print("\n{}: {}\n".format(title, link))
             html = self.__requests_get(link)  # 网络请求
             dom_tree = etree.HTML(html)  # 解析HTML
-            contents = dom_tree.xpath('//div[@class="showtxt"]')
-            print(contents)
+            novel_text = []
+            # 标题
+            title = dom_tree.xpath('//div[@class="book reader"]/div[@class="content"]/h1/text()')[0]
+            print("\ntitle: {}".format(title))
+            novel_text.append("\n" + title + "\n")
+
+            # 内容
+            contents = dom_tree.xpath('//div[@class="showtxt"]/text()')
+            for content in contents:
+                content = content.replace('\xa0', '').replace("app2();", "")
+                novel_text.append(content)
+                print(content)
+
+            # 将列表转化为字符串
+            text = "\n"+"".join(novel_text) + "\n"
+            self.writer(file_name, text)
+
+    # 下载每一章小说
+    def download2(self):
+        # 3.具体内容
+        # 章内容
+        # 上一章
+        # 下一章
+        # 获取小说下载列表信息
+        link = "https://www.biqukan.com/1_1094/5403177.html"
+        html = self.__requests_get(link)  # 网络请求
+        dom_tree = etree.HTML(html)  # 解析HTML
+        novel_text = []
+        # 标题
+        title = dom_tree.xpath('//div[@class="book reader"]/div[@class="content"]/h1/text()')[0]
+        print("\ntitle: {}".format(title))
+        novel_text.append("\n" + title + "\n")
+
+        # 内容
+        contents = dom_tree.xpath('//div[@class="showtxt"]/text()')
+        for content in contents:
+            content = content.replace('\xa0', '').replace("app2();", "")
+            novel_text.append(content)
+            print(content)
+
+        # 将列表转化为字符串
+        text = "\n".join(novel_text)
+
+        file_name = "./novel/" + self.__novel_name + ".txt"
+        # 删除旧文件
+        if file_name in os.listdir():
+            os.remove(file_name)
+
+        self.writer(file_name, text)
+
+    # 写入文件
+    def writer(self, file_name, content):
+        # with open(file_name, "wb") as fp:
+        #     fp.write(content.encode("utf-8"))
+
+        with open(file_name, 'a', encoding='utf-8') as f:
+            f.write(content)
 
 
 # 程序入口
@@ -162,3 +224,10 @@ if __name__ == "__main__":
     print("***************************** 下载小说  ************************************")
     # 下载每页小说并保存
     dl.download()
+
+if __name__ == "__main2__":
+    target_url = "https://www.biqukan.com/1_1094/"
+
+    # 创建下载器
+    dl = Downloader(target_url)
+    dl.download2()
