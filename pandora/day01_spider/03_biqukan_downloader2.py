@@ -25,6 +25,7 @@ class Downloader(object):
         }
         self._novel_dict = collections.OrderedDict()  # 保存章信息的字典
         self.novel_info = collections.OrderedDict()  # 小说信息的字典
+        self._novel_details = collections.OrderedDict()  # 保存小说详情的字典
         self.__novel_name = "无名称"  # 小说名
 
     # 网络请求
@@ -131,10 +132,11 @@ class Downloader(object):
         # 上一章
         # 下一章
         # 获取小说下载列表信息
-        file_name = "./novel/" + self.__novel_name + ".txt"
+        file_name_text = "./novel/" + self.__novel_name + ".txt"
+        file_name = "./novel/" + self.__novel_name + ".json"
         # 删除旧文件
-        if file_name in os.listdir():
-            os.remove(file_name)
+        if file_name_text in os.listdir():
+            os.remove(file_name_text)
 
         for title, link in self._novel_dict.items():
             print("\n{}: {}\n".format(title, link))
@@ -143,19 +145,34 @@ class Downloader(object):
             novel_text = []
             # 标题
             title = dom_tree.xpath('//div[@class="book reader"]/div[@class="content"]/h1/text()')[0]
-            print("\ntitle: {}".format(title))
-            novel_text.append("\n" + title + "\n")
+            # print("\ntitle: {}".format(title))
+            novel_text.append("\n" + title + "\n\n")
 
             # 内容
             contents = dom_tree.xpath('//div[@class="showtxt"]/text()')
             for content in contents:
                 content = content.replace('\xa0', '').replace("app2();", "")
-                novel_text.append(content)
-                print(content)
+                # content = re.sub(r"[\n]+", "\n", content)  # 去除空行和空白
+                if content != "\r":
+                    content_list = content.split("\r\n")  # 去除空行和空白
+                    # print("============== start ==================")
+                    # print("content size = {},type(content_list) = {}".format(len(content), type(content_list)))
+                    # print(content_list)
+                    content = "".join(content_list)
+                    novel_text.append(content)
+                    # print("============== end ==================")
+                    # print(content)
 
             # 将列表转化为字符串
-            text = "\n"+"".join(novel_text) + "\n"
-            self.writer(file_name, text)
+            text = "\n" + "".join(novel_text) + "\n"
+            self.writer(file_name_text, text)
+
+            # 保存小说详情到字典列表
+            self._novel_details["title"] = title
+            self._novel_details["content"] = text
+
+        # 保存字典到json文件
+        self.writer2json(file_name, self._novel_details)
 
     # 下载每一章小说
     def download2(self):
@@ -198,6 +215,18 @@ class Downloader(object):
         with open(file_name, 'a', encoding='utf-8') as f:
             f.write(content)
 
+    # 将字典保存为json
+    def writer2json(self, file_name, dict):
+        # 删除旧文件
+        if file_name in os.listdir():
+            os.remove(file_name)
+
+        # dumps()默认中文为ascii编码格式，ensure_ascii默认为Ture
+        # 禁用ascii编码格式，返回的Unicode字符串，方便使用
+        json_str = json.dumps(dict, ensure_ascii=False)
+        with open(file_name, "wb") as fp:
+            fp.write(json_str.encode('utf-8'))
+
 
 # 程序入口
 if __name__ == "__main__":
@@ -224,6 +253,7 @@ if __name__ == "__main__":
     print("***************************** 下载小说  ************************************")
     # 下载每页小说并保存
     dl.download()
+    print("^_^...恭喜您下载完成...!!!")
 
 if __name__ == "__main2__":
     target_url = "https://www.biqukan.com/1_1094/"
