@@ -40,6 +40,9 @@ import requests
 import json
 
 if __name__ == "__main__":
+    # hanzi = input("请输入要翻译的汉字:")
+    hanzi = "火箭"
+
     # post请求的url
     target = "https://fanyi.baidu.com/v2transapi?from=zh&to=en"
 
@@ -56,7 +59,7 @@ if __name__ == "__main__":
     form_data = {
         "from": "zh",
         "to": "en",
-        "query": "火箭",
+        "query": hanzi,
         "simple_means_flag": "3",
         "sign": "59704.264713",
         "token": "b486e2974261429a363a52bcf57e1b4f",
@@ -67,16 +70,17 @@ if __name__ == "__main__":
     # 方式1: 解决中文乱码问题
     html = response.content
     html = html.decode('utf-8', 'ignore')
-    #html = html.decode('gbk', 'ignore')
+    # html = html.decode('gbk', 'ignore')
 
     # 方式2: 解决中文乱码问题
     # response.encoding = "utf-8"
     # response.encoding = "gbk"
     # html = response.text
     print(html)
+    # dataJsonStr = html.replace("\\n", "")
 
-
-    dataJsonStr = html.replace("\\n", "");
     # 使用JSON
-    translate_results = json.loads(dataJsonStr)
+    translate_results = json.loads(html)
     print(translate_results)
+    print("翻译结果:{} --- >>>  {}".format(translate_results["trans_result"]["data"][0]["src"],
+                                       translate_results["trans_result"]["data"][0]["dst"]))
