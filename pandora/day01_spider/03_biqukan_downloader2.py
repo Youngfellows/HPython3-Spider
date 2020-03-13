@@ -25,7 +25,7 @@ class Downloader(object):
         }
         self._novel_dict = collections.OrderedDict()  # 保存章信息的字典
         self.novel_info = collections.OrderedDict()  # 小说信息的字典
-        self._novel_details = collections.OrderedDict()  # 保存小说详情的字典
+        self._novel_details = []  # 保存小说详情的列表
         self.__novel_name = "无名称"  # 小说名
 
     # 网络请求
@@ -168,8 +168,7 @@ class Downloader(object):
             self.writer(file_name_text, text)
 
             # 保存小说详情到字典列表
-            self._novel_details["title"] = title
-            self._novel_details["content"] = text
+            self._novel_details.append({"title": title, "content": text})
 
         # 保存字典到json文件
         self.writer2json(file_name, self._novel_details)
@@ -215,7 +214,7 @@ class Downloader(object):
         with open(file_name, 'a', encoding='utf-8') as f:
             f.write(content)
 
-    # 将字典保存为json
+    # 将列表保存为json
     def writer2json(self, file_name, dict):
         # 删除旧文件
         if file_name in os.listdir():
