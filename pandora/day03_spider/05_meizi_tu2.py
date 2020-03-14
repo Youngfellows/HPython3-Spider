@@ -8,6 +8,20 @@ from lxml import etree
 import logging
 import time
 
+
+# 将列表保存为json
+def writer2json(file_name, dict):
+    # 删除旧文件
+    if file_name in os.listdir():
+        os.remove(file_name)
+
+    # dumps()默认中文为ascii编码格式，ensure_ascii默认为Ture
+    # 禁用ascii编码格式，返回的Unicode字符串，方便使用
+    json_str = json.dumps(dict, ensure_ascii=False)
+    with open(file_name, "wb") as fp:
+        fp.write(json_str.encode('utf-8'))
+
+
 if __name__ == "__main__":
     requests.packages.urllib3.disable_warnings()  # 去除警告
     logging.captureWarnings(True)
@@ -127,8 +141,9 @@ if __name__ == "__main__":
 
                 # time.sleep(3)
 
-        category_item["links"] = link_list
-        photo_list.append(category_item)
+            category_item["links"] = link_list
+            photo_list.append(category_item)
 
     print("-----------------------------------------")
     print(photo_list)
+    writer2json("./images/美女分类列表.json", photo_list)
