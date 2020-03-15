@@ -20,13 +20,13 @@ def download_picture(tupian_url):
         # 下载每页大图
         urllib.request.urlretrieve(tupian_url, "./images/bigpic/" + str(number) + '.jpg')
         print('正在保存,第%s张图片' % (number))
+        number += 1
     except urllib.error.HTTPError as e:
         print("靠,HTTPError 无法下载第{}张".format(number))
     except urllib.error.URLError as e:
         print("靠,URLError 无法下载第{}张".format(number))
     except:
         print("靠,无法下载第{}张".format(number))
-    number += 1
 
     # 休眠2秒
     time.sleep(2)
@@ -86,86 +86,91 @@ def read_url_for_json():
         for link in link_list:
             print(link)
             # get_meinv_html(link)
-            """
-                    注意: 测试时，只获取第一页的第一个美女图片
-
-                    获取每一页的美女信息
-                    1. 美女分类
-                        每个美女图片title: //div[@class="list_con_box"]/ul/li/a/@title
-                        每个美女图片连接: //div[@class="list_con_box"]/ul/li/a/@href
-                    """
-            # html = get_meinv_html(link_list[0])
-            html = get_meinv_html(link)
-            dom_tree = etree.HTML(html)  # 解析HTML
-            photo_titles = dom_tree.xpath('//div[@class="list_con_box"]/ul/li/a/@title')  # 图片title
-            photo_links = dom_tree.xpath('//div[@class="list_con_box"]/ul/li/a/@href')  # 大图片连接
-            print("photo_titles -->> {}".format(photo_titles))
-            print("photo_links -->> {}".format(photo_links))
-            host = "https://www.tupianzj.com"
-            new_poto_linsk = []  # 大图详情连接列表
-            for link in photo_links:
-                new_poto_linsk.append(host + link)
-            print(new_poto_linsk)
-
-            # 获取每个美女的大图
-            for meinv_name, link in zip(photo_titles, new_poto_linsk):
-                print(meinv_name)
-                print(link)
-                # 获取美女大图
-                # html = get_meinv_html(link)
-                # print(html)
-
-                # 临时测试,只获取第一个美女的
+            try:
                 """
-                4. 每个美女图片详情
-                首图url:  3中的每个美女图片连接
-                          https://www.tupianzj.com/meinv/20200225/204976.html
-                第二图url: https://www.tupianzj.com/meinv/20200225/204976_2.html
-                末尾图url: https://www.tupianzj.com/meinv/20200225/204976_总张的数字.html
+                  注意: 测试时，只获取第一页的第一个美女图片
 
-                 大图片url:  //div[@id="bigpic"]//a/img/@src
-                 总 张  数:  //div[@class="pages"]/ul/li[1]/a/text()
-                 下 一  张:  //div[@class="pages"]/ul/li[last()]/a/@href
-                             //div[@class="pages"]/ul/li[last()]/a/text()
+                  获取每一页的美女信息
+                   1. 美女分类
+                      每个美女图片title: //div[@class="list_con_box"]/ul/li/a/@title
+                      每个美女图片连接: //div[@class="list_con_box"]/ul/li/a/@href
                 """
-
-                # html = get_meinv_html(new_poto_linsk[0])
+                # html = get_meinv_html(link_list[0])
                 html = get_meinv_html(link)
-                # print(html)
                 dom_tree = etree.HTML(html)  # 解析HTML
-                first_url = new_poto_linsk[0]  # 首图url
-                count_str = dom_tree.xpath('//div[@class="pages"]/ul/li[1]/a/text()')[0]  # 图片总数
-                tupian_url = dom_tree.xpath('//div[@id="bigpic"]//a/img/@src')[0]  # 大图片连接
-                pattern = re.compile(r"(\d+)")
-                matchObj = pattern.search(count_str)
-                count = matchObj.group(0)
+                photo_titles = dom_tree.xpath('//div[@class="list_con_box"]/ul/li/a/@title')  # 图片title
+                photo_links = dom_tree.xpath('//div[@class="list_con_box"]/ul/li/a/@href')  # 大图片连接
+                print("photo_titles -->> {}".format(photo_titles))
+                print("photo_links -->> {}".format(photo_links))
+                host = "https://www.tupianzj.com"
+                new_poto_linsk = []  # 大图详情连接列表
+                for link in photo_links:
+                    new_poto_linsk.append(host + link)
+                print(new_poto_linsk)
 
-                print("matchObj = {}".format(matchObj))
-                print("matchObj = {}".format(matchObj.groups()))
-                print("matchObj = {}".format(matchObj.group(0)))
-                print("首图url: {}".format(first_url))
-                print("图片总数: {} -->> {} ".format(count_str, count))
-                print("大图片连接: {}".format(tupian_url))
+                # 获取每个美女的大图
+                for meinv_name, link in zip(photo_titles, new_poto_linsk):
+                    print(meinv_name)
+                    print(link)
+                    # 获取美女大图
+                    # html = get_meinv_html(link)
+                    # print(html)
 
-                # 下载首页大图
-                download_picture(tupian_url)
+                    # 临时测试,只获取第一个美女的
+                    """
+                    4. 每个美女图片详情
+                    首图url:  3中的每个美女图片连接
+                              https://www.tupianzj.com/meinv/20200225/204976.html
+                    第二图url: https://www.tupianzj.com/meinv/20200225/204976_2.html
+                    末尾图url: https://www.tupianzj.com/meinv/20200225/204976_总张的数字.html
 
-                # 轮询下载,第二页到最后一页的图片
-                index = first_url.rfind(".html")
-                pre_url = first_url[0:index]
-                print("index = {}".format(index))
-                print(pre_url)
-
-                for page in range(2, int(count) + 1):
+                     大图片url:  //div[@id="bigpic"]//a/img/@src
+                     总 张  数:  //div[@class="pages"]/ul/li[1]/a/text()
+                     下 一  张:  //div[@class="pages"]/ul/li[last()]/a/@href
+                                 //div[@class="pages"]/ul/li[last()]/a/text()
+                    """
                     try:
-                        page_url = pre_url + "_" + str(page) + ".html"
-                        print("page_url: {}".format(page_url))
-                        html = get_meinv_html(page_url)
+                        # html = get_meinv_html(new_poto_linsk[0])
+                        html = get_meinv_html(link)
+                        # print(html)
                         dom_tree = etree.HTML(html)  # 解析HTML
+                        first_url = new_poto_linsk[0]  # 首图url
+                        count_str = dom_tree.xpath('//div[@class="pages"]/ul/li[1]/a/text()')[0]  # 图片总数
                         tupian_url = dom_tree.xpath('//div[@id="bigpic"]//a/img/@src')[0]  # 大图片连接
+                        pattern = re.compile(r"(\d+)")
+                        matchObj = pattern.search(count_str)
+                        count = matchObj.group(0)
+
+                        print("matchObj = {}".format(matchObj))
+                        print("matchObj = {}".format(matchObj.groups()))
+                        print("matchObj = {}".format(matchObj.group(0)))
+                        print("首图url: {}".format(first_url))
+                        print("图片总数: {} -->> {} ".format(count_str, count))
+                        print("大图片连接: {}".format(tupian_url))
+
+                        # 下载首页大图
                         download_picture(tupian_url)
+
+                        # 轮询下载,第二页到最后一页的图片
+                        index = first_url.rfind(".html")
+                        pre_url = first_url[0:index]
+                        print("index = {}".format(index))
+                        print(pre_url)
+
+                        for page in range(2, int(count) + 1):
+                            try:
+                                page_url = pre_url + "_" + str(page) + ".html"
+                                print("page_url: {}".format(page_url))
+                                html = get_meinv_html(page_url)
+                                dom_tree = etree.HTML(html)  # 解析HTML
+                                tupian_url = dom_tree.xpath('//div[@id="bigpic"]//a/img/@src')[0]  # 大图片连接
+                                download_picture(tupian_url)
+                            except:
+                                print("解析html大图页异常...,继续下一张")
                     except:
-                        print("解析html大图页异常...,继续下一张")
+                        print("解析html异常,继续....")
+            except:
+                print("解析页面异常,继续下...")
 
 
 if __name__ == "__main__":
