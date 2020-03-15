@@ -11,6 +11,7 @@ import os
 import json
 from lxml import etree
 import selenium
+from selenium.common.exceptions import NoSuchElementException
 
 
 # 爬取Boss直聘
@@ -55,21 +56,27 @@ class BossSpider(object):
                 # if self.driver.page_source.find("shark-pager-disable-next") != -1:
                 # if self.driver.page_source.find("dy-Pagination-item-next") != -1:
                 # if self.driver.page_source.find("dy-Pagination-disabled dy-Pagination-next") != -1:
-                try:
-                    # next_disable = self.browser.page_source.find("next disabled")
-                    next_disable = self.browser.find_element_by_class_name("next disabled")
-                    print("next_disable: {}".format(next_disable))
-                    print("最后一页...")
-                    break
-                except selenium.common.exceptions.InvalidSelectorException:
-                    print("没到最后一页...")
+                # try:
+                #     # next_disable = self.browser.page_source.find("next disabled")
+                #     next_disable = self.browser.find_element_by_class_name("next disabled")
+                #     print("next_disable: {}".format(next_disable))
+                #     print("最后一页...")
+                #     break
+                # except selenium.common.exceptions.InvalidSelectorException:
+                #     print("没到最后一页...")
 
-                # 一直点击下一页
-                next = self.browser.find_element_by_class_name("next")
-                cur_page = self.browser.find_element_by_class_name("cur")
-                print("cur_page: {}".format(cur_page.text))
-                print("next: {}".format(next))
-                next.click()
+                # cur_page = self.browser.find_element_by_class_name("cur")
+                cur_page = self.browser.find_element_by_xpath('//div[@class="page"]/a[@class="cur"]').text
+                print("cur_page: {}".format(cur_page))
+                if self.isElementPresent("class", 'next disabled'):
+                    print("已经到最后一页了...")
+                    break
+                else:
+                    print("元素值不存在")
+                    # 一直点击下一页
+                    next = self.browser.find_element_by_class_name("next")
+                    next.click()
+                    print("next: {}".format(next))
 
             except TimeoutError as e:
                 print("超时了....{}".format_map(e))
@@ -115,6 +122,21 @@ class BossSpider(object):
     # 推出浏览器
     def quit_browser(self):
         self.browser.quit()
+
+    # 封装一个函数，用来判断属性值是否存在
+    def isElementPresent(self, by, value):
+        """
+        用来判断元素标签是否存在，
+        """
+        try:
+            element = self.browser.find_element(by=by, value=value)
+        # 原文是except NoSuchElementException, e:
+        except NoSuchElementException as e:
+            # 发生了NoSuchElementException异常，说明页面中未找到该元素，返回False
+            return False
+        else:
+            # 没有发生异常，表示在页面中找到了该元素，返回True
+            return True
 
 
 if __name__ == "__main__":
