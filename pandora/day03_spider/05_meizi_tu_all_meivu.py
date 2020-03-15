@@ -91,64 +91,67 @@ if __name__ == "__main__":
         link_list = []  # 页面连接url连接列表
 
         # 获取分类美女页面信息
-        if type == "丝袜美女":
-            response = requests.get(url=link, headers=headers, verify=False)
+        # if type == "丝袜美女":
+        #  pass
+        response = requests.get(url=link, headers=headers, verify=False)
+        response.encoding = "gbk"
+        html = response.text
+        # print(html)
+
+        """
+        3. 分类美女
+          热门美女专题: 先放着不管
+          分类名称: //div[@class="list_con bgff"][2]/h3/text()
+          首 页url: 上一步2的 url 
+          第二页url:  //div[@class="pages"]/ul/li[3]/a/@href
+          末尾页url：//div[@class="pages"]/ul/li[last()-1]/a/@href
+          下一页url：//div[@class="pages"]/ul/li[last()-2]/a/@href
+
+          每个美女图片title: //div[@class="list_con_box"]/ul/li/a/@title
+          每个美女图片连接: //div[@class="list_con_box"]/ul/li/a/@href
+        """
+        dom_tree = etree.HTML(html)  # 解析HTML
+        first_url = link
+        name = dom_tree.xpath('//div[@class="list_con bgff"][2]/h3/text()')[0]
+        second_url = link + dom_tree.xpath('//div[@class="pages"]/ul/li[3]/a/@href')[0]  # 首 页url
+        final_url = link + dom_tree.xpath('//div[@class="pages"]/ul/li[last()-1]/a/@href')[0]  # 末尾页url
+        next_url = link + dom_tree.xpath('//div[@class="pages"]/ul/li[last()-2]/a/@href')[0]  # 下一页url
+        print("分类名称: -->>> {}".format(name))
+        print("首页url: -->>> {}".format(first_url))
+        print("第二页url: -->>> {}".format(second_url))
+        print("下一页url: -->>> {}".format(next_url))
+        print("末尾页url: -->>> {}".format(final_url))
+        link_list.append(first_url)
+
+        # 继续获取下一页,直至最后一页
+        while next_url != final_url:
+            # 获取下一页html
+            response = requests.get(url=next_url, headers=headers, verify=False)
             response.encoding = "gbk"
             html = response.text
-            # print(html)
 
-            """
-            3. 分类美女
-              热门美女专题: 先放着不管
-              分类名称: //div[@class="list_con bgff"][2]/h3/text()
-              首 页url: 上一步2的 url 
-              第二页url:  //div[@class="pages"]/ul/li[3]/a/@href
-              末尾页url：//div[@class="pages"]/ul/li[last()-1]/a/@href
-              下一页url：//div[@class="pages"]/ul/li[last()-2]/a/@href
-            
-              每个美女图片title: //div[@class="list_con_box"]/ul/li/a/@title
-              每个美女图片连接: //div[@class="list_con_box"]/ul/li/a/@href
-            """
             dom_tree = etree.HTML(html)  # 解析HTML
-            first_url = link
             name = dom_tree.xpath('//div[@class="list_con bgff"][2]/h3/text()')[0]
-            second_url = link + dom_tree.xpath('//div[@class="pages"]/ul/li[3]/a/@href')[0]  # 首 页url
-            final_url = link + dom_tree.xpath('//div[@class="pages"]/ul/li[last()-1]/a/@href')[0]  # 末尾页url
             next_url = link + dom_tree.xpath('//div[@class="pages"]/ul/li[last()-2]/a/@href')[0]  # 下一页url
-            print("分类名称: -->>> {}".format(name))
-            print("首页url: -->>> {}".format(first_url))
-            print("第二页url: -->>> {}".format(second_url))
-            print("下一页url: -->>> {}".format(next_url))
-            print("末尾页url: -->>> {}".format(final_url))
-            link_list.append(first_url)
+            final_url = link + dom_tree.xpath('//div[@class="pages"]/ul/li[last()-1]/a/@href')[0]  # 末尾页url
+            print("2分类名称: -->>> {}".format(name))
+            print("2首页url: -->>> {}".format(first_url))
+            print("2下一页url: -->>> {}".format(next_url))
+            print("2末尾页url: -->>> {}".format(final_url))
+            link_list.append(next_url)
+            # time.sleep(3)
 
-            # 继续获取下一页,直至最后一页
-            while next_url != final_url:
-                # 获取下一页html
-                response = requests.get(url=next_url, headers=headers, verify=False)
-                response.encoding = "gbk"
-                html = response.text
+        category_item["links"] = link_list
+        photo_list.append(category_item)
 
-                dom_tree = etree.HTML(html)  # 解析HTML
-                name = dom_tree.xpath('//div[@class="list_con bgff"][2]/h3/text()')[0]
-                next_url = link + dom_tree.xpath('//div[@class="pages"]/ul/li[last()-2]/a/@href')[0]  # 下一页url
-                final_url = link + dom_tree.xpath('//div[@class="pages"]/ul/li[last()-1]/a/@href')[0]  # 末尾页url
-                print("2分类名称: -->>> {}".format(name))
-                print("2首页url: -->>> {}".format(first_url))
-                print("2下一页url: -->>> {}".format(next_url))
-                print("2末尾页url: -->>> {}".format(final_url))
-                link_list.append(next_url)
-
-                # time.sleep(3)
-
-            category_item["links"] = link_list
-            photo_list.append(category_item)
+        # 休眠5秒
+        time.sleep(5)
 
     print("-----------------------------------------")
     print(photo_list)
-    writer2json("./images/美女分类列表.json", photo_list)
+    writer2json("./images/美女分类列表大全.json", photo_list)
 
-    #获取分类美女每一页的美个美女大图
-    #可以读取./images/美女分类列表.jso解析
+    # 获取分类美女每一页的美个美女大图
+    # 可以读取./images/美女分类列表.jso解析
     for item_meinv in photo_list:
         pass
