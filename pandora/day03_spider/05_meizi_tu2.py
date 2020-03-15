@@ -147,3 +147,8 @@ if __name__ == "__main__":
     print("-----------------------------------------")
     print(photo_list)
     writer2json("./images/美女分类列表.json", photo_list)
+
+    #获取分类美女每一页的美个美女大图
+    #可以读取./images/美女分类列表.jso解析
+    for item_meinv in photo_list:
+        pass
