@@ -148,11 +148,6 @@ def read_url_for_json():
                 print("大图片连接: {}".format(tupian_url))
 
                 # 下载首页大图
-                # try:
-                #     urllib.request.urlretrieve(tupian_url, "./images/bigpic/" + str(number) + '.jpg')
-                #     print('正在保存,第%s张图片' % (number))
-                # except urllib.error.HTTPError as e:
-                #     print("靠,无法下载第{}张".format(number))
                 download_picture(tupian_url)
 
                 # 轮询下载,第二页到最后一页的图片
@@ -162,25 +157,15 @@ def read_url_for_json():
                 print(pre_url)
 
                 for page in range(2, int(count) + 1):
-                    page_url = pre_url + "_" + str(page) + ".html"
-                    print("page_url: {}".format(page_url))
-                    html = get_meinv_html(page_url)
-                    dom_tree = etree.HTML(html)  # 解析HTML
-                    tupian_url = dom_tree.xpath('//div[@id="bigpic"]//a/img/@src')[0]  # 大图片连接
-                    # try:
-                    #     # 下载每页大图
-                    #     urllib.request.urlretrieve(tupian_url, "./images/bigpic/" + str(number) + '.jpg')
-                    #     print('正在保存,第%s张图片' % (number))
-                    # except urllib.error.HTTPError as e:
-                    #     print("靠,HTTPError 无法下载第{}张".format(number))
-                    # except urllib.error.URLError as e:
-                    #     print("靠,URLError 无法下载第{}张".format(number))
-                    # except:
-                    #     print("靠,无法下载第{}张".format(number))
-                    # number += 1
-                    # # 休眠2秒
-                    # time.sleep(3)
-                    download_picture(tupian_url)
+                    try:
+                        page_url = pre_url + "_" + str(page) + ".html"
+                        print("page_url: {}".format(page_url))
+                        html = get_meinv_html(page_url)
+                        dom_tree = etree.HTML(html)  # 解析HTML
+                        tupian_url = dom_tree.xpath('//div[@id="bigpic"]//a/img/@src')[0]  # 大图片连接
+                        download_picture(tupian_url)
+                    except:
+                        print("解析html大图页异常...,继续下一张")
 
 
 if __name__ == "__main__":
