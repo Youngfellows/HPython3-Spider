@@ -83,8 +83,9 @@ def read_url_for_json():
         print("美 女 类 型: {}".format(meinv_type))
         print("美女每页url:")
         # print(link_list)
+        page_index = 1
         for link in link_list:
-            print(link)
+            print("总共{}页,第{}页".format(len(link_list), page_index))
             # get_meinv_html(link)
             try:
                 """
@@ -110,8 +111,8 @@ def read_url_for_json():
 
                 # 获取每个美女的大图
                 for meinv_name, link in zip(photo_titles, new_poto_linsk):
-                    print(meinv_name)
-                    print(link)
+                    print("\n\n将要保存妹子图: {}".format(meinv_name))
+                    print("保存妹子图首页url: {}".format(link))
                     # 获取美女大图
                     # html = get_meinv_html(link)
                     # print(html)
@@ -134,16 +135,18 @@ def read_url_for_json():
                         html = get_meinv_html(link)
                         # print(html)
                         dom_tree = etree.HTML(html)  # 解析HTML
-                        first_url = new_poto_linsk[0]  # 首图url
+                        # first_url = new_poto_linsk[0]  # 首图url
+                        first_url = link  # 首图url
+
                         count_str = dom_tree.xpath('//div[@class="pages"]/ul/li[1]/a/text()')[0]  # 图片总数
                         tupian_url = dom_tree.xpath('//div[@id="bigpic"]//a/img/@src')[0]  # 大图片连接
                         pattern = re.compile(r"(\d+)")
                         matchObj = pattern.search(count_str)
                         count = matchObj.group(0)
 
-                        print("matchObj = {}".format(matchObj))
-                        print("matchObj = {}".format(matchObj.groups()))
-                        print("matchObj = {}".format(matchObj.group(0)))
+                        # print("matchObj = {}".format(matchObj))
+                        # print("matchObj = {}".format(matchObj.groups()))
+                        # print("matchObj = {}".format(matchObj.group(0)))
                         print("首图url: {}".format(first_url))
                         print("图片总数: {} -->> {} ".format(count_str, count))
                         print("大图片连接: {}".format(tupian_url))
@@ -171,6 +174,8 @@ def read_url_for_json():
                         print("解析html异常,继续....")
             except:
                 print("解析页面异常,继续下...")
+
+            page_index += 1
 
 
 if __name__ == "__main__":
