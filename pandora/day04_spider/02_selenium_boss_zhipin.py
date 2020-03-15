@@ -43,45 +43,31 @@ class BossSpider(object):
     def spider(self):
         # 获取html页面
         self.browser.get(self.url)
-        while True:
+        self.end_page = False
+        while not self.end_page:
             try:
+                print("是否到最后一页: end_page = {}".format(self.end_page))
                 # 等待页面元素可见
                 # self.wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "job-list")))
                 self.wait.until(EC.visibility_of_element_located((By.XPATH, u'//div[@class="job-list"]')))
                 # 获取当前页的职位详情
                 self.job_detail()
 
-                # 查找下一个元素是否存在,循环爬取每一页的内容
-                # 如果在页面源码里找到"下一页"为隐藏的标签，就退出循环
-                # if self.driver.page_source.find("shark-pager-disable-next") != -1:
-                # if self.driver.page_source.find("dy-Pagination-item-next") != -1:
-                # if self.driver.page_source.find("dy-Pagination-disabled dy-Pagination-next") != -1:
-                # try:
-                #     # next_disable = self.browser.page_source.find("next disabled")
-                #     next_disable = self.browser.find_element_by_class_name("next disabled")
-                #     print("next_disable: {}".format(next_disable))
-                #     print("最后一页...")
-                #     break
-                # except selenium.common.exceptions.InvalidSelectorException:
-                #     print("没到最后一页...")
-
-                # cur_page = self.browser.find_element_by_class_name("cur")
                 cur_page = self.browser.find_element_by_xpath('//div[@class="page"]/a[@class="cur"]').text
                 print("cur_page: {}".format(cur_page))
-                if self.isElementPresent("class", 'next disabled'):
+                # if self.isElementPresent("class", 'next disabled'):
+                if self.isElementPresent2('//div[@class="page"]/a[@class="next disabled"]'):
                     print("已经到最后一页了...")
-                    break
+                    self.end_page = True
+                    self.quit_browser()
                 else:
-                    print("元素值不存在")
+                    print("最后一个元素不存在...")
                     # 一直点击下一页
                     next = self.browser.find_element_by_class_name("next")
                     next.click()
                     print("next: {}".format(next))
-
             except TimeoutError as e:
                 print("超时了....{}".format_map(e))
-
-        return self.spider()
 
     # 获取职位详情
     def job_detail(self):
@@ -121,6 +107,8 @@ class BossSpider(object):
 
     # 推出浏览器
     def quit_browser(self):
+        print(self.jobs_list)
+        self.writer2json()
         self.browser.quit()
 
     # 封装一个函数，用来判断属性值是否存在
@@ -137,6 +125,36 @@ class BossSpider(object):
         else:
             # 没有发生异常，表示在页面中找到了该元素，返回True
             return True
+
+        # 封装一个函数，用来判断属性值是否存在
+
+    def isElementPresent2(self, path):
+        """
+        用来判断元素标签是否存在，
+        """
+        try:
+            element = self.browser.find_element_by_xpath(path)
+        # 原文是except NoSuchElementException, e:
+        except NoSuchElementException as e:
+            # 发生了NoSuchElementException异常，说明页面中未找到该元素，返回False
+            return False
+        else:
+            # 没有发生异常，表示在页面中找到了该元素，返回True
+            return True
+
+    # 保存列表到json文件
+    def writer2json(self):
+        global sina_news_list
+        file_name = "./json/boss_zhipin_job.json"
+        # 删除旧文件
+        if file_name in os.listdir():
+            os.remove(file_name)
+
+        # dumps()默认中文为ascii编码格式，ensure_ascii默认为Ture
+        # 禁用ascii编码格式，返回的Unicode字符串，方便使用
+        json_str = json.dumps(self.jobs_list, ensure_ascii=False)
+        with open(file_name, "wb") as fp:
+            fp.write(json_str.encode('utf-8'))
 
 
 if __name__ == "__main__":
