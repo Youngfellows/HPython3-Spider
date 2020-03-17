@@ -20,35 +20,15 @@ new_urls = set()  # 新url列表
 old_names = set()  # 旧url列表
 new_names = set()  # 新url列表
 
-
-# 添加新url到集合
-def add_newurl(url):
-    global old_urls, new_urls
-    if url not in new_urls and url not in old_urls:
-        new_urls.add(url)
-
-
-# 取出新集合的url
-def has_newurls():
-    global old_urls, new_urls
-    url = new_urls.pop()
-    old_urls.add(url)
-    return url
+# 保存当前页面的列表
+movie_list = []
 
 
 # 添加新name到集合
-def add_newname(name):
+def add_newname(movie):
     global new_names, old_names
-    if name not in new_names and name not in new_names:
-        new_names.add(name)
-
-
-# 取出新集合的name
-def has_newname():
-    global new_names, old_names
-    name = new_names.pop()
-    old_names.add(url)
-    return name
+    if movie not in movie_list:
+        movie_list.append(movie)
 
 
 # 获取电影详情地址以及电影的名称
@@ -68,6 +48,7 @@ def get_datail_url_and_movie_name(movie_count):
     if movie_count <= 20:
         print("电影总数{}小于20,爬取第一页!!!!".format(movie_count))
         parse_movies()
+        quit_driver()
     else:
         open_more = int(movie_count / 20)
         print("open_more: {}".format(open_more))
@@ -75,24 +56,34 @@ def get_datail_url_and_movie_name(movie_count):
         # 定位加载更多
         for x in range(1, open_more + 1):
             print(f"********************** 加载第{x}页 *****************************")
-            more = WebDriverWait(driver_info, 10).until(
+            more_element = WebDriverWait(driver_info, 10).until(
                 lambda driver_info: driver_info.find_element_by_css_selector('.more'))
 
-            parse_movies()  # 解析电影名称和详情
-
-            # 有个bug,在点击完第一页后，上一页的详情还存在,应该去重复
+            # 等待电影列表加载完成
+            WebDriverWait(driver_info, 10).until(
+                lambda driver_info: driver_info.find_element_by_css_selector('.list'))
 
             # 点击更多
-            more.click()
+            # more_element.click()
+            webdriver.ActionChains(driver_info).move_to_element(more_element).click(more_element).perform()
             print("\n点击更多加载{}页!!!".format(x + 1))
+
+            # 方法一：
+            # element = driver.find_element_by_css('div[class*="loadingWhiteBox"]')
+            # driver.execute_script("arguments[0].click();", element)
+            #
+            # 方法二：
+            # element = driver.find_element_by_css('div[class*="loadingWhiteBox"]')
+            # webdriver.ActionChains(driver).move_to_element(element).click(element).perform()
+
+        # 有个bug,在点击完第一页后，上一页的详情还存在,应该去重复
+        print("><" * 30)
+        parse_movies()  # 解析电影名称和详情
+        quit_driver()  # 关闭浏览器
 
 
 # 解析电影名称和详情
 def parse_movies():
-    # 等待电影列表加载完成
-    WebDriverWait(driver_info, 15).until(
-        lambda driver_info: driver_info.find_element_by_css_selector('.list'))
-
     # 设置显性等待，等待第一条搜索结果的出现
     # 搜索结果的元素表达式
     # list_css = "div[id='1'] h3 a"
@@ -125,27 +116,21 @@ def parse_movies():
     print("link_list.size(): {},{}".format(len(link_list), link_list))
 
     for title, link in zip(new_titles, link_list):
-        print("=" * 60)
         print("电影名: {}".format(title))
         print("详  情: {}".format(link))
-        add_newname(title)  # 添加新name到集合
-        add_newurl(link)  # 添加新url到集合
-        # get_detail_info(link)
+        movie_list.append({"title": title, "link": link})
 
     """
        在这里应该去除重复的上一页电影元素,使用set存在bug,由于set会排序,导致电影名称和url对应不是
     """
-
-    # 循环取出新页面的详情信息
-    url_size = len(new_urls)
-    name_size = len(new_names)
-    print("新页面电影url个数: {}".format(url_size))
-    print("新页面电影name个数: {}".format(url_size))
-    if url_size > 0:
-        for movie, link in zip(new_names, new_urls):
-            print("\n影评,电影名: {}".format(movie))
-            print("电影详情: {}".format(link))
-            get_detail_info(link)
+    number = 1
+    print("=" * 60 + "\n")
+    for movie in movie_list:
+        print("\n\n第{}部电影".format(number))
+        print("影评,电影名: {}".format(movie["title"]))
+        print("电影详情: {}".format(movie["link"]))
+        get_detail_info(movie["link"])
+        number += 1
 
 
 def get_detail_info(url):
@@ -156,10 +141,16 @@ def get_detail_info(url):
     # print(comments_list)
 
     # 获取前15条热门评论
-    for comment in comments_list[:15]:
+    for comment in comments_list[:2]:
         # 在comment这个对象的基础上继续定位p标签
         p = comment.find_element_by_tag_name('p').text
         print("热门评论：{}".format(p))
+
+
+# 关闭浏览器
+def quit_driver():
+    driver_detail.quit()
+    driver_info.quit()
 
 
 if __name__ == '__main__':
