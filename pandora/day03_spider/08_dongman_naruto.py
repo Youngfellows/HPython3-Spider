@@ -68,6 +68,7 @@ if __name__ == "__main__":
     1.妹子图首页url
     """
     host = "http://comic.ikkdm.com"
+    host_img = "http://v2.kukudm.com/"
     target = " http://comic.ikkdm.com/comiclist/3/"
     ua_list = [
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv2.0.1) Gecko/20100101 Firefox/4.0.1",
@@ -142,11 +143,13 @@ if __name__ == "__main__":
         """
         # count = dom_tree.xpath('//tbody//td[@valign="top"]/text()')
         intro = dom_tree.xpath('//table[2]//td[@valign="top"]/text()')[0]
-        img_src = dom_tree.xpath('//tbody//td//a[1]/img/@src')
+        img_src = dom_tree.xpath('//table[2]//td[@valign="top"]/script[1]')[0]
+        img_src = str(etree.tostring(img_src, encoding="utf-8"))  # 将获取到的节点内容转换为string字符串
 
         print("type(intro) = {},size = {}".format(type(intro), len(intro)))
         print("type(img_src) = {},size = {}".format(type(img_src), len(img_src)))
         print("该页图片总数: {}".format(intro))
+        print("type(img_src) = {}".format(type(img_src)))
         print("图片: {}".format(img_src))
 
         # 查找数字
@@ -159,6 +162,17 @@ if __name__ == "__main__":
         print("count: {}".format(count))
 
         # 匹配图片地址的正则表达式
-        pattern_img = re.compile(r'\+"(.+)\'><span')
+        # pattern_img = re.compile(r'\+"(.+)\'><span')
+        pattern_img = re.compile(r'\+"(.+)\'&gt;&lt;/a&gt;&lt;span')
+        imgMatch = pattern_img.search(img_src)
+        # imgMatch = re.findall(pattern_img, img_src)
+        img_url = host_img + str(imgMatch.group(1))
+        img_url = eval(repr(img_url).replace('\\', '')) #替换掉字符中的,反斜杠\
+
+        print("imgMatch: {}".format(imgMatch))
+        print("imgMatch.groups(): {}".format(imgMatch.groups()))
+        print("imgMatch.group(0): {}".format(imgMatch.group(0)))
+        print("imgMatch.group(1): {}".format(img_url))
+        print("img_url: {}".format(img_url))
 
         time.sleep(3)
