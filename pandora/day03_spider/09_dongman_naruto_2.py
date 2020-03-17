@@ -53,7 +53,8 @@ class NarutoSpider(object):
         self.host = "http://comic.ikkdm.com"
         self.host_img = "http://v2.kukudm.com/"
         self.target = " http://comic.ikkdm.com/comiclist/3/"  # 火影忍者url
-        self.parent_name = "\\火影忍者\\"
+        #self.parent_name = "\\火影忍者\\"
+        self.parent_name = r"/火影忍者/"
         self.file_name = "火影忍者.json"
         self.init_headers()
 
