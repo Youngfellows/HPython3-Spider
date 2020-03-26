@@ -23,7 +23,7 @@ class FilePathManager:
         # files = dir_name + '_' + time.strftime('%Y-%m-%d', time.localtime(time.time()))
         path = self.path + dir_name
         isExists = os.path.exists(path)
-        print("CreatePathManager,isExists = {}".format(isExists))
+        #print("CreatePathManager,isExists = {}".format(isExists))
 
         if not isExists:
             os.makedirs(path)
@@ -31,7 +31,7 @@ class FilePathManager:
         else:
             pass
             # print(path + ' 目录已存在')
-        print("mkdir,path = {}".format(path))
+        #print("mkdir,path = {}".format(path))
         return path
 
     """

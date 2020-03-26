@@ -1,14 +1,16 @@
 # coding=utf-8
 # 使用完整路径导入
 from pandora.day05_spider.file_path_anager import FilePathManager
+from requests.adapters import HTTPAdapter
+from lxml import etree
 import json
 import requests
 import traceback
-from lxml import etree
 import os
 import random
 import urllib
 import time
+import sys
 
 """
 人教版中小学教材电子版
@@ -21,10 +23,11 @@ class EducationPDF(object):
         object.__init__(self)
         requests.packages.urllib3.disable_warnings()  # 去除警告
         self.base_url = "http://bp.pep.com.cn/jc"
-        self.parent_name = r"/pdf/"
+        self.parent_name = os.sep + "pdf" + os.sep
         self.file_name = "人教版中小学教材电子版.json"
         self.init_headers()
         self.path_manager = FilePathManager()
+        self.path = self.path_manager.mkdir(self.parent_name)
 
     def init_headers(self):
         """初始化请求头"""
@@ -56,27 +59,46 @@ class EducationPDF(object):
         # print(html)
         return html
 
-    def download_pdf(self, path, pdf_url, number):
-        """下载图片"""
+    def download_img(self, path, pdf_url, img_name):
+        """下载pdf"""
         try:
-            # 下载每页大图
-            urllib.request.urlretrieve(pdf_url, path + "/" + str(number) + '.jpg')
-            print('正在保存,第%s张pdf' % (number))
+            # 下载pdf
+            urllib.request.urlretrieve(pdf_url, path + os.sep + img_name + '.jpg')
+            print('正在保存, %s 图片' % (img_name))
         except urllib.error.HTTPError as e:
-            print("靠,HTTPError 无法下载第{}张pdf".format(number))
+            print("靠,HTTPError 无法下载 {} 图片".format(img_name))
         except urllib.error.URLError as e:
-            print("靠,URLError 无法下载第{}张pdf".format(number))
+            print("靠,URLError 无法下载 {} 图片".format(img_name))
         except:
-            print("靠,无法下载第{}张pdf".format(number))
+            print("靠,无法下载 {} 图片".format(img_name))
 
         # 休眠2秒一下
-        time.sleep(1)
+        time.sleep(2)
+
+    def download_pdf(self, url, file_path, pdf_name):
+        # print("download_pdf,file_path = {}".format(file_path))
+        """下载单个文件(图片/视频)"""
+        try:
+            if not os.path.isfile(file_path):
+                s = requests.Session()
+                s.mount(url, HTTPAdapter(max_retries=5))
+                downloaded = s.get(url, timeout=(5, 10))
+                print('正在保存, %s ' % (file_path))
+                with open(file_path, 'wb') as f:
+                    f.write(downloaded.content)
+        except Exception as e:
+            error_file = './pdf/not_downloaded.txt'
+            with open(error_file, 'ab') as f:
+                url = pdf_name + ':' + url + '\n'
+                f.write(url.encode(sys.stdout.encoding))
+            print('Error: ', e)
+            traceback.print_exc()
 
     def read2json(self, file_name):
         """读取json文件,并转换为字典/列表"""
         with open(file_name, "r", encoding="utf-8") as fp:
             chapters = json.load(fp)
-        print(chapters)
+        # print(chapters)
         return chapters
 
     def writer2json(self, file_name, dict):
@@ -97,10 +119,7 @@ class EducationPDF(object):
         course_list = self.parse_courses()
 
         # 保存到JSON文件
-        path = self.path_manager.mkdir(self.parent_name)
-        self.writer2json(path + self.file_name, course_list)
-
-        # 读取json文件,获取教材下载信息
+        self.writer2json(self.path + self.file_name, course_list)
 
     def parse_courses(self):
         """解析html获取教材信息"""
@@ -163,7 +182,44 @@ class EducationPDF(object):
 
         return details
 
+    def download(self):
+        """读取json文件,获取教材下载信息"""
+        course_list = self.read2json(self.path + self.file_name)
+        # print(course_list)
+        for phase in course_list:
+            title = phase["phase"]  # 每个教育阶段名称
+            print(title)
+            phase_dir = self.parent_name + title
+            # print("phase_dir = {}".format(phase_dir))
+            path_phase = self.path_manager.mkdir(phase_dir)  # 创建每个教育阶段名称目录
+            # print("path_phase = {}".format(path_phase))
+
+            # 获取每个阶段的教材信息
+            courses = phase["courses"]
+            for course in courses:
+                # print(course)
+                course_name = course["course"]  # 每类教材名称
+                # print("course_name = {}".format(course_name))
+                # 创建目录,每类教材的保存目录
+                course_dir = phase_dir + os.sep + course_name + os.sep
+                # print("course_dir = {}".format(course_dir))
+                path_couse = self.path_manager.mkdir(course_dir)
+                # print("path_couse = {}".format(path_couse))
+
+                # 每类教材目录
+                for course_detail in course["details"]:
+                    print(course_detail)
+                    phase_name = course_detail["phase"]  # 教材名称
+                    pdf_url = course_detail["url"]  # 教材PDF下载连接名称
+                    phase_cover = course_detail["cover"]  # 教材封面图
+
+                    # 下载pdf
+                    pdf_path = path_couse + phase_name + ".pdf"
+                    # print("pdf_path = {}".format(pdf_path))
+                    self.download_pdf(pdf_url, pdf_path, phase_name)
+
 
 if __name__ == "__main__":
     edu_pdf = EducationPDF()
     edu_pdf.star()
+    # edu_pdf.download()
