@@ -221,5 +221,5 @@ class EducationPDF(object):
 
 if __name__ == "__main__":
     edu_pdf = EducationPDF()
-    edu_pdf.star()
-    # edu_pdf.download()
+    #edu_pdf.star()
+    edu_pdf.download()
