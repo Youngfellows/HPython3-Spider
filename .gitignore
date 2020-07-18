@@ -128,3 +128,147 @@ dmypy.json
 # Pyre type checker
 .pyre/
 pandora/day07_taxi/
+pandora/day09_nuance/json/
+pandora/day09_nuance/png/origin/84_stop navigation.png
+pandora/day09_nuance/png/origin/83_select F.M. eighty 1 dot 9.png
+pandora/day09_nuance/png/origin/82_select F.M. eighty dot 1.png
+pandora/day09_nuance/png/origin/81_select F.M. eighty 4 dot 2.png
+pandora/day09_nuance/png/origin/80_how do I get there.png
+pandora/day09_nuance/png/origin/7_view full routes.png
+pandora/day09_nuance/png/origin/79_start recording.png
+pandora/day09_nuance/png/origin/78_back to navigation.png
+pandora/day09_nuance/png/origin/77_turn off the camera.png
+pandora/day09_nuance/png/origin/76_stop the music.png
+pandora/day09_nuance/png/origin/75_turn on inside car camera.png
+pandora/day09_nuance/png/origin/74_turn on in-car camera.png
+pandora/day09_nuance/png/origin/106_select F.M. ninety 1 dot 1.png
+pandora/day09_nuance/png/origin/105_select A.M. ninety 2 dot 7.png
+pandora/day09_nuance/png/origin/104_view panoramic camera.png
+pandora/day09_nuance/png/origin/103_select F.M. eighty 8 dot 0.png
+pandora/day09_nuance/png/origin/102_select F.M. eighty 5 dot 5.png
+pandora/day09_nuance/png/origin/101_select F.M. eighty 6 dot 0.png
+pandora/day09_nuance/png/origin/100_select A.M. eighty 0 dot 0.png
+pandora/day09_nuance/png/origin/0_histogram2.png
+pandora/day09_nuance/png/vip/15_northward.png
+pandora/day09_nuance/png/vip/14_zoom in map.png
+pandora/day09_nuance/png/vip/13_third one.png
+pandora/day09_nuance/png/vip/12_next song.png
+pandora/day09_nuance/png/vip/11_frontward.png
+pandora/day09_nuance/png/vip/10_fourth.png
+pandora/day09_nuance/png/vip/0_histogram2.png
+pandora/day09_nuance/png/origin/9_next page.png
+pandora/day09_nuance/png/origin/99_select F.M. eighty dot 2.png
+pandora/day09_nuance/png/origin/98_turn on outside car camera.png
+pandora/day09_nuance/png/origin/97_select F.M. hundred dot 1.png
+pandora/day09_nuance/png/origin/96_continue playback.png
+pandora/day09_nuance/png/origin/19_which way.png
+pandora/day09_nuance/png/origin/18_arrival time.png
+pandora/day09_nuance/png/origin/17_fifth one.png
+pandora/day09_nuance/png/origin/16_next song.png
+pandora/day09_nuance/png/origin/15_second.png
+pandora/day09_nuance/png/origin/117_select A.M. eighty 5 dot 5.png
+pandora/day09_nuance/png/origin/116_select F.M. eighty 0 dot 7.png
+pandora/day09_nuance/png/origin/115_select F.M. hundred dot 0.png
+pandora/day09_nuance/png/origin/114_select A.M. eighty 5 dot 0.png
+pandora/day09_nuance/png/origin/113_select F.M. seventy 2 dot 1.png
+pandora/day09_nuance/png/origin/112_select A.M. eighty 2 dot 5.png
+pandora/day09_nuance/png/origin/111_select F.M. ninety 1 dot 5.png
+pandora/day09_nuance/png/origin/110_select F.M. hundred dot 3.png
+pandora/day09_nuance/png/origin/10_pause the music.png
+pandora/day09_nuance/png/origin/109_select F.M. eighty dot 3.png
+pandora/day09_nuance/png/origin/108_select F.M. eighty 1 dot 3.png
+pandora/day09_nuance/png/origin/107_avoid traffic jams.png
+pandora/day09_nuance/png/origin/62_avoid traffic.png
+pandora/day09_nuance/png/origin/61_second one.png
+pandora/day09_nuance/png/origin/60_select A.M. eighty 1 dot 1.png
+pandora/day09_nuance/png/origin/5_back to navi.png
+pandora/day09_nuance/png/origin/59_start the routes.png
+pandora/day09_nuance/png/origin/58_make sound louder.png
+pandora/day09_nuance/png/origin/57_turn on camera insdie.png
+pandora/day09_nuance/png/origin/56_select A.M. eighty 8 dot 8.png
+pandora/day09_nuance/png/origin/55_exit cameras.png
+pandora/day09_nuance/png/origin/54_resume playback.png
+pandora/day09_nuance/png/origin/53_next music.png
+pandora/day09_nuance/png/origin/52_review the photos.png
+pandora/day09_nuance/png/origin/2_pause.png
+pandora/day09_nuance/png/origin/29_check the photos.png
+pandora/day09_nuance/png/origin/28_start navi.png
+pandora/day09_nuance/png/origin/27_make sound lower.png
+pandora/day09_nuance/png/origin/26_check around view camera.png
+pandora/day09_nuance/png/origin/25_zoom out map.png
+pandora/day09_nuance/png/origin/24_first one.png
+pandora/day09_nuance/png/origin/23_select A.M. eighty 0 dot 7.png
+pandora/day09_nuance/png/origin/22_volume down.png
+pandora/day09_nuance/png/origin/21_preview the routes.png
+pandora/day09_nuance/png/origin/20_previous song.png
+pandora/day09_nuance/png/origin/1_Alexa.png
+pandora/day09_nuance/png/origin/73_highway first.png
+pandora/day09_nuance/png/origin/72_check the album.png
+pandora/day09_nuance/png/origin/71_avoid toll roads.png
+pandora/day09_nuance/png/origin/70_avoid rush hours.png
+pandora/day09_nuance/png/origin/6_how long will it take.png
+pandora/day09_nuance/png/origin/69_back to homepage.png
+pandora/day09_nuance/png/origin/68_stop recording.png
+pandora/day09_nuance/png/origin/67_go to homepage.png
+pandora/day09_nuance/png/origin/66_stop navi.png
+pandora/day09_nuance/png/origin/65_north up.png
+pandora/day09_nuance/png/origin/64_increase volume.png
+pandora/day09_nuance/png/origin/63_stop filming.png
+pandora/day09_nuance/png/origin/40_how to get there.png
+pandora/day09_nuance/png/origin/3_third.png
+pandora/day09_nuance/png/origin/39_stop the routes.png
+pandora/day09_nuance/png/origin/38_stop playback.png
+pandora/day09_nuance/png/origin/37_where to go.png
+pandora/day09_nuance/png/origin/36_zoom in map.png
+pandora/day09_nuance/png/origin/35_what is the arrival time.png
+pandora/day09_nuance/png/origin/34_review the album.png
+pandora/day09_nuance/png/origin/33_volume up.png
+pandora/day09_nuance/png/origin/32_continue playing.png
+pandora/day09_nuance/png/origin/31_stop playing.png
+pandora/day09_nuance/png/origin/30_decrease volume.png
+pandora/day09_nuance/png/vip/6_Alexa.png
+pandora/day09_nuance/png/vip/5_which way.png
+pandora/day09_nuance/png/vip/4_sixth.png
+pandora/day09_nuance/png/vip/3_pause.png
+pandora/day09_nuance/png/vip/2_play the music.png
+pandora/day09_nuance/png/vip/21_first one.png
+pandora/day09_nuance/png/vip/20_previous song.png
+pandora/day09_nuance/png/vip/1_pause the music.png
+pandora/day09_nuance/png/vip/19_fourth one.png
+pandora/day09_nuance/png/origin/95_check panoramic view.png
+pandora/day09_nuance/png/origin/94_select A.M. eighty 0 dot 1.png
+pandora/day09_nuance/png/origin/93_turn on dash camera.png
+pandora/day09_nuance/png/origin/92_turn on in-vehicle camera.png
+pandora/day09_nuance/png/origin/51_take pictures.png
+pandora/day09_nuance/png/origin/50_previors page.png
+pandora/day09_nuance/png/origin/4_fifth.png
+pandora/day09_nuance/png/origin/49_fourth one.png
+pandora/day09_nuance/png/origin/48_avoid tolls.png
+pandora/day09_nuance/png/origin/47_avoid highway.png
+pandora/day09_nuance/png/origin/46_northward.png
+pandora/day09_nuance/png/origin/45_routes overview.png
+pandora/day09_nuance/png/origin/44_avoid freeway.png
+pandora/day09_nuance/png/origin/43_take a picture.png
+pandora/day09_nuance/png/origin/42_frontward.png
+pandora/day09_nuance/png/origin/41_third one.png
+pandora/day09_nuance/png/origin/91_select F.M. ninety dot 6.png
+pandora/day09_nuance/png/origin/90_previous music.png
+pandora/day09_nuance/png/origin/8_first.png
+pandora/day09_nuance/png/origin/89_start navigation.png
+pandora/day09_nuance/png/origin/88_sixth one.png
+pandora/day09_nuance/png/origin/87_start filming.png
+pandora/day09_nuance/png/origin/86_freeway first.png
+pandora/day09_nuance/png/origin/85_select F.M. eighty 7 dot 7.png
+pandora/day09_nuance/png/origin/14_head up.png
+pandora/day09_nuance/png/origin/13_fourth.png
+pandora/day09_nuance/png/origin/12_play the music.png
+pandora/day09_nuance/png/origin/120_select F.M. seventy 1 dot 2.png
+pandora/day09_nuance/png/origin/11_sixth.png
+pandora/day09_nuance/png/origin/119_select F.M. hundred dot 7.png
+pandora/day09_nuance/png/origin/118_select F.M. eighty 0 dot 0.png
+pandora/day09_nuance/png/vip/9_third.png
+pandora/day09_nuance/png/vip/8_first.png
+pandora/day09_nuance/png/vip/7_second.png
+pandora/day09_nuance/png/vip/18_head up.png
+pandora/day09_nuance/png/vip/17_stop playing.png
+pandora/day09_nuance/png/vip/16_where to go.png

@@ -8,9 +8,22 @@ class Nuance(object):
     def __init__(self):
         """构造函数"""
         object.__init__(self)
-        self.origin_data_path = "./json/nuance_asr.json"
-        self.filter_path = "./json/confidence_asr.json"
-        self.average_path = "./json/average_confidence_asr.json"
+        # 全部识别结果
+        self.origin_filter_confidence_path = "./json/origin/filter_origin_confidence.json"
+        self.origin_filter_average_path = "./json/origin/filter_origin_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
+        self.origin_filter_first_all_path = "./json/origin/filter_origin_first_all.json"  # 筛选的全部识别结果的第一条数据
+        # self.origin_all_data_path = "json/2020-07-08/nuance_asr_all.json"  # 全部识别结果数据
+        # self.origin_all_data_path = "./json/2020-07-10/nuance_asr_all.json"  # 全部识别结果数据
+        self.origin_all_data_path = "./json/2020-07-13/nuance_asr.json"  # 全部识别结果数据
+        # self.origin_all_data_path = "./json/2020-07-14/nuance_asr.json"  # 全部识别结果数据
+
+        # VIP识别结果
+        self.vip_filter_confidence_path = "./json/vip/filter_vip_confidence.json"
+        self.vip_filter_average_path = "./json/vip/filter_vip_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
+        self.vip_filter_first_all_path = "./json/vip/filter_vip_first_all.json"  # 筛选的全部识别结果的第一条数据
+        # self.vip_data_path = "./json/2020-07-10/nuance_asr_result.json"  # 全部识别结果数据
+        self.vip_data_path = "./json/2020-07-13/nuance_asr_result.json"  # 全部识别结果数据
+        # self.vip_data_path = "./json/2020-07-14/nuance_asr_result.json"  # 全部识别结果数据
 
     def json2dict(self, json_data):
         """将json字符串转化为python的字典对象"""
@@ -35,9 +48,9 @@ class Nuance(object):
         with open(file_name, "wb") as fp:
             fp.write(json_str.encode('utf-8'))
 
-    def filter(self):
+    def filter(self, fitler_path, confidence_path, average_path):
         """数据清洗"""
-        commands = self.read2json(self.origin_data_path)
+        commands = self.read2json(fitler_path)
         print("================ 数据清洗 ========================")
         filter_commands = []  # 过滤结果列表
 
@@ -64,14 +77,17 @@ class Nuance(object):
                 print("exits {} ... ".format(command["cmd"]))
 
         # 保存清洗后的数据到本地
+        print("保存清洗后的数据到本地")
         print(filter_commands)
-        self.writer2json(self.filter_path, filter_commands)
-        self.average()
+        self.writer2json(confidence_path, filter_commands)
 
-    def average(self):
+        # 求取均值
+        self.average(confidence_path, average_path)
+
+    def average(self, confidence_path, average_path):
         """求取均值"""
         print("================== 求取均值 ====================")
-        filter_commands = self.read2json(self.filter_path)
+        filter_commands = self.read2json(confidence_path)
         for index, command in enumerate(filter_commands):
             print("{},{}".format(index, command))
             confidences = command["confidences"]
@@ -84,9 +100,97 @@ class Nuance(object):
             command["average_score"] = int(average_score)
 
         print(filter_commands)
-        self.writer2json(self.average_path, filter_commands)
+        self.writer2json(average_path, filter_commands)
+
+    def filter_all(self, origin_data_path):
+        """清洗全部数据,第一条识别结果"""
+        print("================ 清洗全部数据 ========================")
+        nuance_asr_array = self.read2json(origin_data_path)
+        print("nuance_asr_array: size: {}".format(len(nuance_asr_array)))
+        commonds = []  # 保存清洗后的列表
+        for i, nuance_asr in enumerate(nuance_asr_array):
+            print("index: {} , {}".format(i, nuance_asr))
+            # 筛选出每一次结果的第一条数据
+            hypotheses = nuance_asr["hypotheses"]
+            # for j,hypothese in enumerate(hypotheses):
+            #     #一次识别的多个结果
+            #     print(hypothese)
+            if hypotheses:
+                hypothese = hypotheses[0]
+                items = hypothese["items"]
+                item = items[0]
+                command = {"cmd": item["orthography"],
+                           "confidence": item["confidence"],
+                           "score": item["score"],
+                           "beginTime": item["beginTime"],
+                           "endTime": item["endTime"]}
+                commonds.append(command)
+
+        return commonds
+
+    def filter_all_new(self, origin_data_path):
+        """新,清洗全部数据,第一条识别结果"""
+        print("================ 清洗全部数据 ========================")
+        nuance_asr_array = self.read2json(origin_data_path)
+        print("nuance_asr_array: size: {}".format(len(nuance_asr_array)))
+        commonds = []  # 保存清洗后的列表
+        for i, nuance_asr in enumerate(nuance_asr_array):
+            print("index: {} , {}".format(i, nuance_asr))
+            # 筛选出每一次结果的第一条数据
+            hypotheses = nuance_asr["hypotheses"]
+            # for j,hypothese in enumerate(hypotheses):
+            #     #一次识别的多个结果
+            #     print(hypothese)
+            if hypotheses:
+                hypothese = hypotheses[0]
+                items = hypothese["items"]
+                # print("items: {}".format(items))
+                cmd_items = [item["orthography"] for item in items]  # 列表循环式
+                cmd = " ".join(cmd_items)  # 列表转化为字符串
+                command = {"cmd": cmd,
+                           "confidence": hypothese["confidence"],
+                           "score": hypothese["score"],
+                           "beginTime": hypothese["beginTime"],
+                           "endTime": hypothese["endTime"]}
+                commonds.append(command)
+        return commonds
+
+    def filter_origin_all_first(self):
+        """筛选原始数据的第一条识别结果"""
+        print("=======================   筛选原始数据的第一条识别结果  ===============================")
+        # commonds = self.filter_all(self.origin_all_data_path)
+        commonds = self.filter_all_new(self.origin_all_data_path)
+
+        # 把清洗后的第一条数据保存到JSON
+        self.writer2json(self.origin_filter_first_all_path, commonds)
+        for i, command in enumerate(commonds):
+            print("{}: {}".format(i, command))
+
+        # 分析
+        self.filter(self.origin_filter_first_all_path, self.origin_filter_confidence_path,
+                    self.origin_filter_average_path)
+
+    def filter_vip_first(self):
+        """筛选VIP识别结果的第一条"""
+        print("=======================   筛选VIP识别结果的第一条  ===============================")
+        # commonds = self.filter_all(self.vip_data_path)
+        commonds = self.filter_all_new(self.vip_data_path)
+
+        # 把清洗后的第一条数据保存到JSON
+        self.writer2json(self.vip_filter_first_all_path, commonds)
+        for i, command in enumerate(commonds):
+            print("{}: {}".format(i, command))
+
+        # 分析
+        self.filter(self.vip_filter_first_all_path, self.vip_filter_confidence_path,
+                    self.vip_filter_average_path)
 
 
 if __name__ == "__main__":
     nuance = Nuance()
-    nuance.filter()
+
+    # 1. 筛选全部识别结果的第一条
+    nuance.filter_origin_all_first()
+
+    # 2. 筛选VIP识别结果的第一条
+    nuance.filter_vip_first()
