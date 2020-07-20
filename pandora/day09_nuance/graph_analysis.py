@@ -8,10 +8,10 @@ from pandora.day09_nuance.file_path_manager import FilePathManager
 class NuanceGraphAnalysis(object):
     def __init__(self):
         object.__init__(self)
-        self.origin_filter_average_path = "./json/origin/filter_origin_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
+        self.origin_filter_average_path = "json/origin/filter_origin_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
         self.origin_png_name = "origin"
 
-        self.vip_filter_average_path = "./json/vip/filter_vip_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
+        self.vip_filter_average_path = "json/vip/filter_vip_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
         self.vip_png_name = "vip"
 
     def json2dict(self, json_data):
@@ -145,7 +145,7 @@ class NuanceGraphAnalysis(object):
         png_path = dir_name + "0_histogram2.png";
         print("dir_name: {}".format(png_path))
         plt.savefig(str(png_path))
-        #plt.show()
+        # plt.show()
         plt.clf()  # 重置画布
 
     def origin_analysis(self):

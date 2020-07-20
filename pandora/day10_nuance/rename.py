@@ -2,6 +2,7 @@
 import os
 import re
 import shutil
+import time
 
 
 class MyOS(object):
@@ -15,10 +16,10 @@ class MyOS(object):
         # path = "."
         path = os.getcwd()  # 返回当前工作目录
         dirs = os.listdir(path)  # 获取所有文件和文件夹
-        print(dirs)
-        number = 0
+        # print(dirs)
+        number = 3
 
-        print("*" * 60)
+        print("=**=" * 60)
         # 输出所有文件和文件夹
         for file in dirs:
             print(file)
@@ -42,12 +43,16 @@ class MyOS(object):
                         print("index:{}, name:{}, file_suffix:{}".format(index, name, file_suffix))
                         if file_suffix == ".mp3":
                             # new_name = re.sub(r"_\[.*\]_", "_[浪漫巴厘岛]_", name)
-                            new_name = re.sub(r"^\d.*[^\.]+", "_[Harry Potter]_", name)
-                            print("new_name: {}".format(new_name))
-                            new_file = parent + os.sep + str(number) + "_" + new_name + file_suffix
-                            print("new_file: {}".format(new_file))
-                            os.rename(file, new_file)
-                            number = number + 1
+                            try:
+                                new_name = re.sub(r"^\d.*[^\.]+", "_[Harry Potter]_A", name)
+                                print("new_name: {}".format(new_name))
+                                new_file = parent + os.sep + str(number) + "_" + new_name + file_suffix
+                                print("number: {}, new_file: {}".format(number, new_file))
+                                os.rename(file, new_file)
+                                number = number + 1
+                                time.sleep(0.2)#延迟200ms
+                            except Exception as e:
+                                print(e)
 
     def move_all(self):
         """移动全部文件到指定目录"""

@@ -9,21 +9,25 @@ class Nuance(object):
         """构造函数"""
         object.__init__(self)
         # 全部识别结果
-        self.origin_filter_confidence_path = "./json/origin/filter_origin_confidence.json"
-        self.origin_filter_average_path = "./json/origin/filter_origin_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
-        self.origin_filter_first_all_path = "./json/origin/filter_origin_first_all.json"  # 筛选的全部识别结果的第一条数据
+        self.origin_filter_confidence_path = "json/origin/filter_origin_confidence.json"
+        self.origin_filter_average_path = "json/origin/filter_origin_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
+        self.origin_filter_first_all_path = "json/origin/filter_origin_first_all.json"  # 筛选的全部识别结果的第一条数据
         # self.origin_all_data_path = "json/2020-07-08/nuance_asr_all.json"  # 全部识别结果数据
         # self.origin_all_data_path = "./json/2020-07-10/nuance_asr_all.json"  # 全部识别结果数据
-        self.origin_all_data_path = "./json/2020-07-13/nuance_asr.json"  # 全部识别结果数据
-        # self.origin_all_data_path = "./json/2020-07-14/nuance_asr.json"  # 全部识别结果数据
+        # self.origin_all_data_path = "json/2020-07-13/nuance_asr.json"  # 全部识别结果数据
+        # self.origin_all_data_path = "./json/2020-07-15/nuance_asr.json"  # 全部识别结果数据
+        # self.origin_all_data_path = "./json/2020-07-16/nuance_asr.json"  # 全部识别结果数据
+        self.origin_all_data_path = "./json/2020-07-17/nuance_asr.json"  # 全部识别结果数据
 
         # VIP识别结果
-        self.vip_filter_confidence_path = "./json/vip/filter_vip_confidence.json"
-        self.vip_filter_average_path = "./json/vip/filter_vip_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
-        self.vip_filter_first_all_path = "./json/vip/filter_vip_first_all.json"  # 筛选的全部识别结果的第一条数据
+        self.vip_filter_confidence_path = "json/vip/filter_vip_confidence.json"
+        self.vip_filter_average_path = "json/vip/filter_vip_average_confidence.json"  # 筛选后的全部识别结果每一条指令数据
+        self.vip_filter_first_all_path = "json/vip/filter_vip_first_all.json"  # 筛选的全部识别结果的第一条数据
         # self.vip_data_path = "./json/2020-07-10/nuance_asr_result.json"  # 全部识别结果数据
-        self.vip_data_path = "./json/2020-07-13/nuance_asr_result.json"  # 全部识别结果数据
-        # self.vip_data_path = "./json/2020-07-14/nuance_asr_result.json"  # 全部识别结果数据
+        # self.vip_data_path = "json/2020-07-13/nuance_asr_result.json"  # 全部识别结果数据
+        # self.vip_data_path = "./json/2020-07-15/nuance_asr_result.json"  # 全部识别结果数据
+        # self.vip_data_path = "./json/2020-07-16/nuance_asr_result.json"  # 全部识别结果数据
+        self.vip_data_path = "./json/2020-07-17/nuance_asr_result.json"  # 全部识别结果数据
 
     def json2dict(self, json_data):
         """将json字符串转化为python的字典对象"""
@@ -136,23 +140,28 @@ class Nuance(object):
         commonds = []  # 保存清洗后的列表
         for i, nuance_asr in enumerate(nuance_asr_array):
             print("index: {} , {}".format(i, nuance_asr))
-            # 筛选出每一次结果的第一条数据
-            hypotheses = nuance_asr["hypotheses"]
+            # print("type(nuance_asr): {}".format(type(nuance_asr)))
             # for j,hypothese in enumerate(hypotheses):
             #     #一次识别的多个结果
             #     print(hypothese)
-            if hypotheses:
-                hypothese = hypotheses[0]
-                items = hypothese["items"]
-                # print("items: {}".format(items))
-                cmd_items = [item["orthography"] for item in items]  # 列表循环式
-                cmd = " ".join(cmd_items)  # 列表转化为字符串
-                command = {"cmd": cmd,
-                           "confidence": hypothese["confidence"],
-                           "score": hypothese["score"],
-                           "beginTime": hypothese["beginTime"],
-                           "endTime": hypothese["endTime"]}
-                commonds.append(command)
+
+            # 筛选出每一次结果的第一条数据
+            has_key = "hypotheses" in nuance_asr.keys()
+            print("has the key 'hypotheses': {}".format(has_key))
+            if has_key:
+                hypotheses = nuance_asr["hypotheses"]
+                if hypotheses:
+                    hypothese = hypotheses[0]
+                    items = hypothese["items"]
+                    # print("items: {}".format(items))
+                    cmd_items = [item["orthography"] for item in items]  # 列表循环式
+                    cmd = " ".join(cmd_items)  # 列表转化为字符串
+                    command = {"cmd": cmd,
+                               "confidence": hypothese["confidence"],
+                               "score": hypothese["score"],
+                               "beginTime": hypothese["beginTime"],
+                               "endTime": hypothese["endTime"]}
+                    commonds.append(command)
         return commonds
 
     def filter_origin_all_first(self):
